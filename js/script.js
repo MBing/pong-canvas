@@ -9,7 +9,9 @@ var ballSpeedY = 5;
 var ballRadius = 10;
 
 var paddleLeftY = 250;
+var paddleRightY = 250;
 var paddleHeight = 100;
+var paddleWidth = 10;
 
 function drawBall() {
     context.beginPath();
@@ -21,7 +23,12 @@ function drawBall() {
 
 function leftPaddle() {
     context.fillStyle = 'white';
-    context.fillRect(0, paddleLeftY, 10, paddleHeight);
+    context.fillRect(0, paddleLeftY, paddleWidth, paddleHeight);
+}
+
+function rightPaddle() {
+    context.fillStyle = 'white';
+    context.fillRect(canvas.width - paddleWidth, paddleRightY, paddleWidth, paddleHeight);
 }
 
 function calcMousePosition(e) {
@@ -29,10 +36,17 @@ function calcMousePosition(e) {
     var root = document.documentElement;
     var mouseX = e.clientX - rect.left - root.scrollLeft;
     var mouseY = e.clientY - rect.top - root.scrollTop;
+
     return {
         x: mouseX,
         y: mouseY
     };
+}
+
+function ballReset() {
+    ballSpeedX = -ballSpeedX;
+    x = canvas.width / 2;
+    y = canvas.height / 2;
 }
 
 function resetCanvas () {
@@ -41,12 +55,24 @@ function resetCanvas () {
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function hasHitPaddleLeft() {
+    return y > paddleLeftY && y < paddleLeftY + paddleHeight;
+}
+
+function hasHitPaddleRight() {
+    return y > paddleRightY && y < paddleRightY + paddleHeight;
+}
+
 function move () {
     x += ballSpeedX;
     y += ballSpeedY;
 
-    if (x >= canvas.width || x <= 0) {
-        ballSpeedX = -ballSpeedX;
+    if (x < paddleWidth || x > canvas.width - paddleWidth) {
+        if (hasHitPaddleLeft() || hasHitPaddleRight()) {
+                ballSpeedX = -ballSpeedX;
+        } else {
+            ballReset();
+        }
     }
 
     if (y >= canvas.height || y <= 0) {
@@ -59,6 +85,7 @@ function draw() {
     move();
     drawBall()
     leftPaddle();
+    rightPaddle();
 
     requestAnimationFrame(draw);
 
