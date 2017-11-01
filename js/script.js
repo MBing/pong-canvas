@@ -26,6 +26,13 @@ function drawBall() {
     context.closePath();
 }
 
+function drawNet() {
+    for(var i = 0; i < canvas.height; i += 40) {
+        context.fillStyle = 'white';
+        context.fillRect(canvas.width / 2 -1, i, 2, 20);
+    }
+}
+
 function leftPaddle() {
     context.fillStyle = 'white';
     context.fillRect(0, paddleLeftY, paddleWidth, paddleHeight);
@@ -136,6 +143,7 @@ function draw() {
     leftPaddle();
     rightPaddle();
     drawScore();
+    drawNet();
 
     requestAnimationFrame(draw);
 
