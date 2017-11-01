@@ -13,6 +13,9 @@ var paddleRightY = 250;
 var paddleHeight = 100;
 var paddleWidth = 10;
 
+var playerLeftScore = 0;
+var playerRightScore = 0;
+
 function drawBall() {
     context.beginPath();
     context.fillStyle='red';    
@@ -63,15 +66,34 @@ function hasHitPaddleRight() {
     return y > paddleRightY && y < paddleRightY + paddleHeight;
 }
 
-function move () {
+function computerMove() {
+    var paddleRightCenter = paddleRightY + (paddleHeight / 2);
+    if (paddleRightCenter < (y - 35)) {
+        paddleRightY += 7;
+    } else if (paddleRightCenter > (y + 35)) {
+        paddleRightY -= 7;
+    }
+}
+
+function move() {
     x += ballSpeedX;
     y += ballSpeedY;
 
-    if (x < paddleWidth || x > canvas.width - paddleWidth) {
-        if (hasHitPaddleLeft() || hasHitPaddleRight()) {
+    if (x < paddleWidth) {
+        if (hasHitPaddleLeft()) {
                 ballSpeedX = -ballSpeedX;
         } else {
             ballReset();
+            playerRightScore++;
+        }
+    }
+
+    if (x > canvas.width - paddleWidth) {
+        if (hasHitPaddleRight()) {
+                ballSpeedX = -ballSpeedX;
+        } else {
+            ballReset();
+            playerLeftScore++;
         }
     }
 
@@ -80,12 +102,19 @@ function move () {
     }
 }
 
+function drawScore() {
+    context.fillText(playerLeftScore, 100, 100);
+    context.fillText(playerRightScore, canvas.width - 100, 100);
+}
+
 function draw() {
     resetCanvas();
     move();
+    computerMove();    
     drawBall()
     leftPaddle();
     rightPaddle();
+    drawScore();
 
     requestAnimationFrame(draw);
 
