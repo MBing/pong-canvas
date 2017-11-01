@@ -16,6 +16,8 @@ var paddleWidth = 10;
 var playerLeftScore = 0;
 var playerRightScore = 0;
 
+var winningScore = 5;
+
 function drawBall() {
     context.beginPath();
     context.fillStyle='red';    
@@ -47,6 +49,17 @@ function calcMousePosition(e) {
 }
 
 function ballReset() {
+    if (playerLeftScore >= winningScore ||
+        playerRightScore >= winningScore) {
+            if (playerLeftScore > playerRightScore) {
+                alert('Left Player won!');
+            } else {
+                alert('Right Player won!');
+            }
+
+            playerLeftScore = 0;
+            playerRightScore = 0;
+        }
     ballSpeedX = -ballSpeedX;
     x = canvas.width / 2;
     y = canvas.height / 2;
@@ -76,24 +89,32 @@ function computerMove() {
 }
 
 function move() {
+    var deltaY;
+
     x += ballSpeedX;
     y += ballSpeedY;
 
     if (x < paddleWidth) {
         if (hasHitPaddleLeft()) {
                 ballSpeedX = -ballSpeedX;
+
+                deltaY = y - (paddleLeftY + paddleHeight / 2);
+                ballSpeedY = deltaY * 0.35;
         } else {
-            ballReset();
             playerRightScore++;
+            ballReset();
         }
     }
 
     if (x > canvas.width - paddleWidth) {
         if (hasHitPaddleRight()) {
                 ballSpeedX = -ballSpeedX;
+
+                deltaY = y - (paddleRightY + paddleHeight / 2);
+                ballSpeedY = deltaY * 0.35;
         } else {
-            ballReset();
             playerLeftScore++;
+            ballReset();
         }
     }
 
